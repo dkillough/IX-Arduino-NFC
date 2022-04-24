@@ -1,6 +1,5 @@
 #include <MFRC522.h>    // uncomment in Sketch
 #include <SPI.h>
-//#include "stations.h"
 
 #define STATION_NUM 2 // station number 1-4 or 0 if check-in
 
@@ -10,16 +9,14 @@
 MFRC522 rfid(SS_PIN, RST_PIN); // Instance of the class
 
 byte nuidPICC[4];
-//byte* visitByte;s
+//byte* visitByte;
+byte stationNumMap[] = {0, 7, 5, 3, 1};
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
   SPI.begin(); // Init SPI bus
   rfid.PCD_Init(); // Init MFRC522 
-  if(STATION_NUM) {
-//    setWhichStationIAm(STATION_NUM);
-  }
   pinMode(8, OUTPUT); // initialization of output 8 as "Output"
 }
 
@@ -43,4 +40,8 @@ void loop() {
   delay(500);
   digitalWrite(8, LOW); // LED off on output 8
 
+}
+
+byte writeStation(byte rfidData) {
+  return rfidData | stationNumMap[STATION_NUM];
 }

@@ -11,12 +11,13 @@ MFRC522 rfid(SS_PIN, RST_PIN); // Instance of the class
 byte nuidPICC[4];
 byte block = 1;
 
+MFRC522::StatusCode status;
+
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
   SPI.begin(); // Init SPI bus
   rfid.PCD_Init(); // Init MFRC522 
-  pinMode(8, OUTPUT); // initialization of output 8 as "Output"
 }
 
 void loop() {
@@ -27,13 +28,17 @@ void loop() {
   // Verify if the NUID has been readed
   if ( ! rfid.PICC_ReadCardSerial()) return;
 
-  byte buffer[18];
-  byte buffer_size = sizeof(buffer);
+  auth();
+
+  printUUID();
+  initCard();
+}
+  
+void auth() {
   MFRC522::MIFARE_Key key;
-  MFRC522::StatusCode status;
   key = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
 
-    // AUTHENTICATE USING KEY A : STARTS
+  // AUTHENTICATE USING KEY A
   status = rfid.PCD_Authenticate(MFRC522::PICC_CMD_MF_AUTH_KEY_A, block, &key, &(rfid.uid));
   if (status != MFRC522::STATUS_OK) {
     Serial.print(F("PCD_Authenticate(): FAILED"));
@@ -42,20 +47,21 @@ void loop() {
   } else {
     Serial.println(F("PCD_Authenticate(): SUCCESS"));
   }
-  // AUTHENTICATE USING KEY A : ENDS
+}
 
-  digitalWrite(8, HIGH); // LED on the output 8
-
+void printUUID() {
   Serial.print("UUID:");
   for (byte i = 0; i < 4; i++) {
     nuidPICC[i] = rfid.uid.uidByte[i];
     Serial.print(" " + String(nuidPICC[i]));
   }
   Serial.println(".");
+}
 
-  byte data_set[] = { 29 };
-
-  status = rfid.MIFARE_Write(block, data_set, 16);
+void initCard() {
+  // check NFC read/write before handing them passport
+  byte bufferSet[] = {0};
+  status = rfid.MIFARE_Write(block, bufferSet, 16);
   if (status != MFRC522::STATUS_OK) {
     Serial.println(F("MIFARE_Write(): FAILED"));
     Serial.println(rfid.GetStatusCodeName(status));
@@ -63,6 +69,10 @@ void loop() {
   } else {
     Serial.println(F("MIFARE_Write(): SUCCESS"));
   }
+
+  // check card
+  byte buffer[18];
+  byte buffer_size = sizeof(buffer);
 
   status = rfid.MIFARE_Read(block, buffer, &buffer_size);
   if (status != MFRC522::STATUS_OK) {
@@ -71,41 +81,8 @@ void loop() {
     return;
   } else {
     Serial.println(F("MIFARE_Read(): SUCCESS"));
-    Serial.println("Data returned by rfid:");
-    for(byte eb = 0; eb < buffer_size; eb++) {
-      Serial.println(buffer[eb]);
-    }
-  }
-
-  delay(500);
-  digitalWrite(8, LOW); // LED off on output 8
-
-}
-
-void initCard() {
-  // check NFC read/write before handing them passport
-  MFRC522::StatusCode status2;
-  byte bufferSet[] = {0};
-  status2 = rfid.MIFARE_Write(block, bufferSet, 16);
-  if (status2 != MFRC522::STATUS_OK) {
-    Serial.println(F("MIFARE_Write(): FAILED"));
-    Serial.println(rfid.GetStatusCodeName(status2));
-    return;
-  } else {
-    Serial.println(F("MIFARE_Write(): SUCCESS"));
-  }
-
-  // check card
-  byte buff[18];
-  byte buff_size = sizeof(buff);
-  status2 = rfid.MIFARE_Read(block, buff, &buff_size);
-  if (status2 != MFRC522::STATUS_OK) {
-    Serial.println(F("MIFARE_Read(): FAILED"));
-    Serial.println(rfid.GetStatusCodeName(status2));
-    return;
-  } else {
-    Serial.println(F("MIFARE_Read(): SUCCESS"));
-    Serial.print("Card data: " + bufferSet[0]);
-    Serial.println(" Should read 0.");
+    Serial.print("Card data: ");
+    Serial.print(buffer[0]);
+    Serial.println(". Should read 0.");
   }
 }
