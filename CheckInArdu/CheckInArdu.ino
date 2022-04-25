@@ -26,7 +26,7 @@ void loop() {
   // Reset the loop if no new card present on the sensor/reader.
   if ( ! rfid.PICC_IsNewCardPresent()) return;
 
-  // Verify if the NUID has been readed
+  // Verify if the NUID has been read
   if ( ! rfid.PICC_ReadCardSerial()) return;
 
   digitalWrite(LED_PIN, HIGH); // LED on the output 8
@@ -78,12 +78,13 @@ void checkCard() {
     Serial.println(F("INITIAL READ SUCCESS"));
     Serial.print("Card data: ");
     Serial.print(buffer[0]);
-    Serial.println(". Should read 0.");
+    Serial.println(". Should read some value between 0 and 255 inclusive.");
   }
 
   byte bufferSet[1] = {buffer[0]};
   byte* toAdd = &bufferSet[1];
   byte data = buffer[0];
+  buffer_size = sizeof(bufferSet);
   
   // if they visited station 1
   if(data & 0b00001000 == 0b00001000) {
@@ -117,11 +118,11 @@ void checkCard() {
   // Readback  
   status = rfid.MIFARE_Read(block, bufferSet, &buffer_size);
   if (status != MFRC522::STATUS_OK) {
-    Serial.println(F("INITIAL READ FAILED"));
+    Serial.println(F("RE-READ FAILED"));
     Serial.println(rfid.GetStatusCodeName(status));
     return;
   } else {
-    Serial.println(F("INITIAL READ SUCCESS"));
+    Serial.println(F("RE-READ SUCCESS"));
     Serial.print("Card data: ");
     Serial.print(bufferSet[0]);
     Serial.println(". Should read some value based on what's been checked in.");

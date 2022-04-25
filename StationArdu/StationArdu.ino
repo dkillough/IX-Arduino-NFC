@@ -30,7 +30,7 @@ void loop() {
   // Reset the loop if no new card present on the sensor/reader.
   if ( ! rfid.PICC_IsNewCardPresent()) return;
 
-  // Verify if the NUID has been readed
+  // Verify if the NUID has been read
   if ( ! rfid.PICC_ReadCardSerial()) return;
 
   digitalWrite(LED_PIN, HIGH); // LED on the output 8
