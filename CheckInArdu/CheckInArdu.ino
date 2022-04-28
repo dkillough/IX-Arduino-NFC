@@ -123,8 +123,18 @@ void checkCard() {
     return;
   } else {
     Serial.println(F("RE-READ SUCCESS"));
-    Serial.print("Card data: ");
-    Serial.print(bufferSet[0]);
-    Serial.println(". Should read some value based on what's been checked in.");
+    parseByte(bufferSet[0]);
+    // Serial.print("Card data: ");
+    // Serial.print(bufferSet[0]);
+    // Serial.println(". Should read some value based on what's been checked in.");
   }
+}
+
+void parseByte(byte cardData) {
+  Serial.println("Stations checked in: ");
+  if(cardData & 0b10000000) { Serial.print("1 "); } 
+  if(cardData & 0b01000000) { Serial.print("2 "); }
+  if(cardData & 0b00100000) { Serial.print("3 "); }
+  if(cardData & 0b00010000) { Serial.print("4");  }
+  Serial.println("");
 }

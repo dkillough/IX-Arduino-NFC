@@ -63,13 +63,12 @@ void loop() {
     return;
   } else {
     Serial.println(F("WRITE SUCCESS"));
-    Serial.print(("new data: "));
-    Serial.println(bufferSet[0]);
+    // Serial.print(("new data: "));
+    // Serial.println(bufferSet[0]);
   }
   
   delay(400);
   digitalWrite(LED_PIN, LOW); // LED off on output 8
-
 }
 
 void auth() {
