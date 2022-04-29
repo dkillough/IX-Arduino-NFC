@@ -47,10 +47,10 @@ void loop() {
     Serial.println(rfid.GetStatusCodeName(status));
     return;
   } else {
-    Serial.println(F("INITIAL READ SUCCESS"));
-    Serial.print("Card data: ");
-    Serial.print(buffer[0]);
-    Serial.println(". Should read 0.");
+    // Serial.println(F("INITIAL READ SUCCESS"));
+    // Serial.print("Card data: ");
+    // Serial.print(buffer[0]);
+    // Serial.println(". Should read 0.");
   }
 
   byte newData = buffer[0] | stationNumMap[STATION_NUM];
@@ -62,14 +62,13 @@ void loop() {
     Serial.println(rfid.GetStatusCodeName(status));
     return;
   } else {
-    Serial.println(F("WRITE SUCCESS"));
-    Serial.print(("new data: "));
+    // Serial.println(F("WRITE SUCCESS"));
+    Serial.print("New data: ");
     Serial.println(bufferSet[0]);
   }
   
   delay(400);
   digitalWrite(LED_PIN, LOW); // LED off on output 8
-
 }
 
 void auth() {
@@ -83,7 +82,7 @@ void auth() {
     Serial.println(rfid.GetStatusCodeName(status));
     return;
   } else {
-    Serial.println(F("PCD_Authenticate(): SUCCESS"));
+    // Serial.println(F("PCD_Authenticate(): SUCCESS"));
   }
 }
 

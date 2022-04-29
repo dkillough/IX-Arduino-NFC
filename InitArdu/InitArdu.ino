@@ -53,7 +53,7 @@ void auth() {
     Serial.println(rfid.GetStatusCodeName(status));
     return;
   } else {
-    Serial.println(F("PCD_Authenticate(): SUCCESS"));
+    // Serial.println(F("PCD_Authenticate(): SUCCESS"));
   }
 }
 
@@ -75,7 +75,7 @@ void initCard() {
     Serial.println(rfid.GetStatusCodeName(status));
     return;
   } else {
-    Serial.println(F("MIFARE_Write(): SUCCESS"));
+    // Serial.println(F("MIFARE_Write(): SUCCESS"));
   }
 
   // check card
@@ -88,7 +88,7 @@ void initCard() {
     Serial.println(rfid.GetStatusCodeName(status));
     return;
   } else {
-    Serial.println(F("MIFARE_Read(): SUCCESS"));
+    // Serial.println(F("MIFARE_Read(): SUCCESS"));
     Serial.print("Card data: ");
     Serial.print(buffer[0]);
     Serial.println(". Should read 0.");
