@@ -81,29 +81,29 @@ void checkCard() {
     Serial.println(". Should read some value between 0 and 255 inclusive.");
   }
 
-  byte bufferSet[1] = {buffer[0]};
-  byte* toAdd = &bufferSet[1];
+  byte bufferSet[18] = {buffer[0]};
   byte data = buffer[0];
-  buffer_size = sizeof(bufferSet);
-  
+  buffer_size = 18;
+
   // if they visited station 1
-  if(data & 0b00001000 == 0b00001000) {
-    *toAdd |= 0b10000000;
+  if(int(data & 0b00001000) == 8) {
+    bufferSet[0] |= 0b10000000;
   }
 
   // if they visited station 2
-  if(data & 0b00000100 == 0b00000100) {
-    *toAdd |= 0b01000000;
+  if(int(data & 0b00000100) == 4) {
+    Serial.println("aaa");
+    bufferSet[0] |= 0b01000000;
   }
 
   // if they visited station 3
-  if(data & 0b00000010 == 0b00000010) {
-    *toAdd |= 0b00100000;
+  if(int(data & 0b000000010) == 2) {
+    bufferSet[0] |= 0b00100000;
   }
 
   // if they visited station 4
-  if(data & 0b00000001 == 0b00000001) {
-    *toAdd |= 0b00010000;
+  if(int(data & 0b000000001) == 1) {
+    bufferSet[0] |= 0b00010000;
   }
 
   status = rfid.MIFARE_Write(block, bufferSet, 16);
@@ -114,7 +114,7 @@ void checkCard() {
   } else {
     Serial.println(F("WRITE SUCCESS"));
   }
-
+  
   // Readback  
   status = rfid.MIFARE_Read(block, bufferSet, &buffer_size);
   if (status != MFRC522::STATUS_OK) {

@@ -1,7 +1,7 @@
 #include <MFRC522.h>    // uncomment in Sketch
 #include <SPI.h>
 
-#define STATION_NUM 2 // station number 1-4 or 0 if check-in
+#define STATION_NUM 1 // station number 1-4 or 0 if check-in
 
 #define SS_PIN 10
 #define RST_PIN 9
@@ -54,7 +54,7 @@ void loop() {
   }
 
   byte newData = buffer[0] | stationNumMap[STATION_NUM];
-  byte bufferSet[1] = {newData};
+  byte bufferSet[18] = {newData};
 
   status = rfid.MIFARE_Write(block, bufferSet, 16);
   if (status != MFRC522::STATUS_OK) {
